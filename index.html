@@ -338,15 +338,14 @@ function renderFavorites() {
         toggleGeneration();
       }
     });
-
-    // Double-click output to favorite the last name
+    // Double-click to favorite last name
     outputDiv.addEventListener('dblclick', () => {
-      const lastName = outputDiv.lastChild ? outputDiv.lastChild.textContent : null;
+      const lastName = outputDiv.lastChild ? outputDiv.lastChild.textContent.trim() : null;
       if (lastName && !favorites.includes(lastName)) {
         favorites.unshift(lastName);
         if (favorites.length > 80) favorites.pop();
         localStorage.setItem('namegen_favorites', JSON.stringify(favorites));
-        renderFavorites();
+        renderFavorites();        // This forces a refresh
       }
     });
 

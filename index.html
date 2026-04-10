@@ -49,7 +49,6 @@
     }
 
     .custom-row { margin: 8px 0; }
-    label { margin-right: 8px; }
 
     #output {
       width: 100%;
@@ -109,23 +108,21 @@
     </label>
   </div>
 
-  <!-- Customize Section -->
   <div class="customize">
     <strong>Customize:</strong><br><br>
-
     <div class="custom-row">
       <label>Max Base Length: <span id="maxLenValue">14</span></label>
       <input type="range" id="maxLength" min="6" max="24" value="14" oninput="updateMaxLength(this.value)">
     </div>
 
     <div class="custom-row">
-      <label>Title: <input type="text" id="customTitle" placeholder="e.g. King, Queen, Lord" style="width:160px"></label>
+      <label>Title: <input type="text" id="customTitle" placeholder="e.g. King, Lizard" style="width:160px"></label>
       <label><input type="checkbox" id="useTitles" checked> Random Titles</label>
     </div>
 
     <div class="custom-row">
-      <label>Prefix: <input type="text" id="customPrefix" placeholder="e.g. Dark, Blood" style="width:140px"></label>
-      <label>Suffix: <input type="text" id="customSuffix" placeholder="e.g. born, ward" style="width:140px"></label>
+      <label>Prefix: <input type="text" id="customPrefix" placeholder="e.g. Dark" style="width:140px"></label>
+      <label>Suffix: <input type="text" id="customSuffix" placeholder="e.g. born" style="width:140px"></label>
     </div>
 
     <div class="custom-row">
@@ -152,7 +149,6 @@
     const consonants = ["b","c","d","f","g","h","j","k","l","m","n","p","q","r","s","t","v","w","x","z","th","sh","ch","ph","br","dr","fr","gr","kr","pr","str","tr","vr","wr"];
     const oddities = [{odd: "nn", rate: 35},{odd: "ll", rate: 40},{odd: "rr", rate: 50},{odd: "th", rate: 85},{odd: "sh", rate: 90},{odd: "dr", rate: 60},{odd: "kr", rate: 45},{odd: "ss", rate: 30},{odd: "lf", rate: 35},{odd: "thr", rate: 55},{odd: "nd", rate: 70},{odd: "ng", rate: 65},{odd: "st", rate: 75}];
 
-    // ==================== GLOBALS ====================
     let isRunning = false;
     let intervalId = null;
     let currentSpeed = 30;
@@ -164,7 +160,7 @@
     let favorites = JSON.parse(localStorage.getItem('namegen_favorites') || '[]');
 
     function setup() {
-      outputDiv.innerHTML = "Glargod's Namegen Engine v11.2 — Customize your chaos!<br><br>";
+      outputDiv.innerHTML = "Glargod's Namegen Engine v11.2<br><br>";
       renderFavorites();
     }
 
@@ -176,7 +172,6 @@
     function generateBaseName() {
       let nameArray = [];
 
-      // Custom Prefix
       const customPrefix = document.getElementById('customPrefix').value.trim();
       if (customPrefix) nameArray.push(customPrefix);
       else if (Math.random() < 0.25) nameArray.push(prefixes[Math.floor(Math.random() * prefixes.length)]);
@@ -193,7 +188,6 @@
         }
       }
 
-      // Custom Suffix
       const customSuffix = document.getElementById('customSuffix').value.trim();
       if (customSuffix) nameArray.push(customSuffix);
       else if (Math.random() < 0.35) nameArray.push(suffixes[Math.floor(Math.random() * suffixes.length)]);
@@ -206,11 +200,9 @@
       let nameParts = [];
 
       const customTitle = document.getElementById('customTitle').value.trim();
-      const useRandomTitle = document.getElementById('useTitles').checked;
-
       if (customTitle) {
         nameParts.push(customTitle + " ");
-      } else if (useRandomTitle && Math.random() < 0.18) {
+      } else if (document.getElementById('useTitles').checked && Math.random() < 0.18) {
         nameParts.push(titles[Math.floor(Math.random() * titles.length)] + " ");
       }
 
@@ -219,8 +211,7 @@
       if (document.getElementById('useOf').checked && Math.random() < 0.18) {
         nameParts.push(" of ");
         nameParts.push(prefixes[Math.floor(Math.random() * prefixes.length)]);
-      } 
-      else if (document.getElementById('useSecondName').checked && Math.random() < 0.10) {
+      } else if (document.getElementById('useSecondName').checked && Math.random() < 0.10) {
         nameParts.push(" ");
         nameParts.push(generateBaseName());
       }
@@ -250,12 +241,11 @@
       });
     }
 
-    // Controls
     function toggleGeneration() {
       if (isRunning) {
         clearInterval(intervalId);
         isRunning = false;
-        statusDiv.textContent = "PAUSED";
+        statusDiv.textContent = "PAUSED — Press SPACE or click Start/Pause";
       } else {
         isRunning = true;
         statusDiv.textContent = "Generating... (SPACE to pause)";
@@ -265,7 +255,10 @@
 
     function updateSpeed() {
       currentSpeed = parseInt(document.getElementById('speedSelect').value);
-      if (isRunning) intervalId = setInterval(generateName, currentSpeed);
+      if (isRunning) {
+        clearInterval(intervalId);
+        intervalId = setInterval(generateName, currentSpeed);
+      }
     }
 
     function updateMaxLength(value) {
@@ -285,12 +278,13 @@
       statusDiv.textContent = "Output cleared";
     }
 
-    // Favorites (same as before)
+    // ==================== FIXED FAVORITES ====================
     function renderFavorites() {
       if (favorites.length === 0) {
-        favoritesDiv.innerHTML = "<i>No favorites yet...</i>";
+        favoritesDiv.innerHTML = "<i>No favorites yet. Double-click names to add them.</i>";
         return;
       }
+
       let html = '';
       favorites.forEach(name => {
         html += `<div class="fav-item" onclick="copyNameFromFavorites(this, '${name.replace(/'/g, "\\'")}')">${name}</div>`;
@@ -308,7 +302,7 @@
 
     function copyAllFavorites() {
       if (favorites.length === 0) return;
-      navigator.clipboard.writeText(favorites.join('\n')).then(() => alert('All favorites copied!'));
+      navigator.clipboard.writeText(favorites.join('\n')).then(() => alert('✅ All favorites copied!'));
     }
 
     function clearFavorites() {
@@ -319,6 +313,7 @@
       }
     }
 
+    // Keyboard
     document.addEventListener('keydown', e => {
       if (e.key === " ") {
         e.preventDefault();
@@ -326,16 +321,22 @@
       }
     });
 
+    // Double-click to add to favorites - FIXED VERSION
     outputDiv.addEventListener('dblclick', () => {
-      const lastName = outputDiv.lastChild ? outputDiv.lastChild.textContent.trim() : null;
+      const lastLine = outputDiv.lastChild;
+      if (!lastLine) return;
+
+      const lastName = lastLine.textContent.trim();
+
       if (lastName && !favorites.includes(lastName)) {
-        favorites.unshift(lastName);
+        favorites.unshift(lastName);           // Add to top
         if (favorites.length > 80) favorites.pop();
         localStorage.setItem('namegen_favorites', JSON.stringify(favorites));
-        renderFavorites();
+        renderFavorites();                     // Force refresh
       }
     });
 
+    // Initialize
     setup();
   </script>
 </body>

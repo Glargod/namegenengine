@@ -14,21 +14,18 @@
       color: #e0e0ff;
       box-sizing: border-box;
     }
-
     h1 {
       text-align: center;
       color: #00ffcc;
       font-size: 1.8rem;
       margin: 10px 0 5px;
     }
-
     .subtitle {
       text-align: center;
       color: #ffcc00;
       font-size: 14px;
       margin-bottom: 15px;
     }
-
     .controls {
       text-align: center;
       margin: 15px 0;
@@ -38,7 +35,6 @@
       justify-content: center;
       align-items: center;
     }
-
     button {
       padding: 10px 16px;
       font-size: 15px;
@@ -50,16 +46,13 @@
       flex: 1 1 auto;
       min-width: 110px;
     }
-
     button:hover {
       background-color: #00ccaa;
     }
-
     select {
       padding: 8px;
       font-size: 15px;
     }
-
     #output {
       width: 100%;
       max-width: 100%;
@@ -76,22 +69,18 @@
       white-space: pre-wrap;
       word-break: break-all;
     }
-
     .name-line {
       cursor: pointer;
       padding: 3px 6px;
       border-radius: 3px;
     }
-
     .name-line:hover {
       background-color: #2a2a44;
     }
-
     .name-line.copied {
       background-color: #00aa77;
       color: white;
     }
-
     #favorites {
       width: 100%;
       max-height: 180px;
@@ -102,26 +91,22 @@
       font-family: monospace;
       font-size: 15px;
     }
-
-    .status {
-      text-align: center;
-      margin: 10px 0;
-      font-size: 14px;
-      color: #88ffaa;
-    }
-
-        .fav-item {
+    .fav-item {
       cursor: pointer;
       padding: 4px 6px;
       margin: 2px 0;
       border-radius: 3px;
       word-break: break-all;
     }
-    
     .fav-item:hover {
       background-color: #2a2a44;
     }
-
+    .status {
+      text-align: center;
+      margin: 10px 0;
+      font-size: 14px;
+      color: #88ffaa;
+    }
     @media (max-width: 480px) {
       body { padding: 8px; }
       h1 { font-size: 1.6rem; }
@@ -140,7 +125,7 @@
     <button onclick="generateBurst(50)">+50 Burst</button>
     <button onclick="clearOutput()">Clear Output</button>
     
-    <label>Speed: 
+    <label>Speed:
       <select id="speedSelect" onchange="updateSpeed()">
         <option value="80">Slow</option>
         <option value="30" selected>Normal</option>
@@ -152,13 +137,13 @@
   <div class="status" id="status">Ready — Press SPACEBAR or click Start</div>
   <div id="output"></div>
 
-  <h2 style="color:#ffcc00; margin-top:25px;">⭐ Favorites 
-    <button onclick="copyAllFavorites()" style="font-size:13px;padding:5px 12px;">Copy All</button> 
+  <h2 style="color:#ffcc00; margin-top:25px;">⭐ Favorites
+    <button onclick="copyAllFavorites()" style="font-size:13px;padding:5px 12px;">Copy All</button>
     <button onclick="clearFavorites()" style="font-size:13px;padding:5px 12px;">Clear</button>
   </h2>
   <div id="favorites"></div>
 
-    <script>
+  <script>
     // ==================== BIGGER DATASET ====================
     const prefixes = ["Eld","Var","Lor","Thal","Gal","Ar","Fen","Vel","Dur","Nor","Kor","Sylv","Myth","Drak","Riven","Kael","Thorne","Bael","Zor","Myr",
                       "Ael","Vael","Dorn","Gald","Hal","Ith","Jor","Kyr","Lir","Mael","Nym","Orin","Pael","Quor","Rath","Syl","Tarn","Uld","Vorn","Wyr","Xal","Yor","Zeth"];
@@ -213,7 +198,6 @@
       for (let i = 0; i < syllables; i++) {
         nameArray.push(consonants[Math.floor(Math.random() * consonants.length)]);
         nameArray.push(vowels[Math.floor(Math.random() * vowels.length)]);
-
         if (Math.random() < 0.07) nameArray.push("'");
         
         if (Math.random() < 0.18) {
@@ -312,7 +296,7 @@
       }
 
       let html = '';
-      favorites.forEach((name, index) => {
+      favorites.forEach(name => {
         html += `<div class="fav-item" onclick="copyNameFromFavorites(this, '${name.replace(/'/g, "\\'")}')">${name}</div>`;
       });
       favoritesDiv.innerHTML = html;
@@ -322,9 +306,7 @@
       navigator.clipboard.writeText(name).then(() => {
         const original = element.textContent;
         element.textContent = "✅ Copied!";
-        setTimeout(() => {
-          element.textContent = original;
-        }, 1400);
+        setTimeout(() => element.textContent = original, 1400);
       });
     };
 
@@ -343,11 +325,18 @@
       }
     }
 
-    // Double-click on output to add to favorites
+    // Keyboard support
+    document.addEventListener('keydown', e => {
+      if (e.key === " ") {
+        e.preventDefault();
+        toggleGeneration();
+      }
+    });
+
+    // Double-click output to add to favorites
     outputDiv.addEventListener('dblclick', () => {
       const lastLine = outputDiv.lastChild;
       if (!lastLine) return;
-      
       const lastName = lastLine.textContent.trim();
       
       if (lastName && !favorites.includes(lastName)) {
@@ -357,7 +346,7 @@
         renderFavorites();
       }
     });
-      
+
     // Initialize
     setup();
   </script>

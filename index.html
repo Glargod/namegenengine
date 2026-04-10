@@ -146,20 +146,15 @@
   </h2>
   <div id="favorites"></div>
 
-  <script>
+    <script>
     // ==================== BIGGER DATASET ====================
     const prefixes = ["Eld","Var","Lor","Thal","Gal","Ar","Fen","Vel","Dur","Nor","Kor","Sylv","Myth","Drak","Riven","Kael","Thorne","Bael","Zor","Myr",
                       "Ael","Vael","Dorn","Gald","Hal","Ith","Jor","Kyr","Lir","Mael","Nym","Orin","Pael","Quor","Rath","Syl","Tarn","Uld","Vorn","Wyr","Xal","Yor","Zeth"];
-
     const suffixes = ["on","ar","eth","iel","or","is","an","ir","ul","en","orath","vorn","thar","mir","lyn","drel","vor","karn","dor","fel","grim","har","ith","kesh","lor","mal","nir","oril","phel","quar","reth","sarn","tor","uth","vyr","weth","xar","yrel","zorn"];
-
     const titles = ["Lord","Baron","Sir","Chief","Warden","Ranger","Sage","Knight","Drift","Shadow","Storm","High","Void","Iron","Frost","Blood","Moon","Star","Dawn","Dusk","Rune","Blade","Flame","Ash","Ember"];
-
     const vowels = ["a","e","i","o","u","y","ae","ai","ea","eo","ia","io","oa","ui"];
-
     const consonants = ["b","c","d","f","g","h","j","k","l","m","n","p","q","r","s","t","v","w","x","z",
                         "th","sh","ch","ph","br","dr","fr","gr","kr","pr","str","tr","vr","wr"];
-
     const oddities = [
       {odd: "nn", rate: 35}, {odd: "ll", rate: 40}, {odd: "rr", rate: 50},
       {odd: "th", rate: 85}, {odd: "sh", rate: 90}, {odd: "dr", rate: 60},
@@ -190,15 +185,13 @@
       return Math.random() * 100 < oddities[idx].rate ? oddities[idx].odd : null;
     }
 
-        function generateBaseName() {
+    function generateBaseName() {
       let nameArray = [];
       
-      // Optional prefix (25% chance)
       if (Math.random() < 0.25) {
         nameArray.push(prefixes[Math.floor(Math.random() * prefixes.length)]);
       }
 
-      // 2 to 4 syllables — keeps names reasonably short
       const syllables = Math.floor(Math.random() * 3) + 2;
 
       for (let i = 0; i < syllables; i++) {
@@ -206,14 +199,13 @@
         nameArray.push(vowels[Math.floor(Math.random() * vowels.length)]);
 
         if (Math.random() < 0.07) nameArray.push("'");
-
+        
         if (Math.random() < 0.18) {
           const odd = approveOddity();
           if (odd) nameArray.push(odd);
         }
       }
 
-      // Optional suffix (35% chance)
       if (Math.random() < 0.35) {
         nameArray.push(suffixes[Math.floor(Math.random() * suffixes.length)]);
       }
@@ -224,15 +216,15 @@
     function generateName() {
       let nameParts = [];
 
-      // Optional Title (e.g. Lord, Sir, etc.) — kept separate
+      // Optional Title
       if (Math.random() < 0.18) {
         nameParts.push(titles[Math.floor(Math.random() * titles.length)] + " ");
       }
 
-      // Main base name (this is what we shortened)
+      // Main short base name
       nameParts.push(generateBaseName());
 
-      // Optional addon: " of Something" — much rarer now
+      // Optional " of Something"
       if (Math.random() < 0.18) {
         nameParts.push(" of ");
         nameParts.push(prefixes[Math.floor(Math.random() * prefixes.length)]);
@@ -246,6 +238,7 @@
       const fullName = nameParts.join('').trim();
       addNameToOutput(fullName);
     }
+
     function addNameToOutput(name) {
       const line = document.createElement('div');
       line.className = 'name-line';
@@ -300,8 +293,8 @@
     }
 
     function renderFavorites() {
-      favoritesDiv.innerHTML = favorites.length === 0 
-        ? "<i>No favorites yet. Click names or double-click output area.</i>" 
+      favoritesDiv.innerHTML = favorites.length === 0
+        ? "<i>No favorites yet. Click names or double-click output area.</i>"
         : favorites.map(name => `<div style="cursor:pointer" onclick="copyName(this, '${name.replace(/'/g, "\\'")}')">${name}</div>`).join('');
     }
 
@@ -326,20 +319,18 @@
       }
     });
 
+    // Double-click to favorite last name
     outputDiv.addEventListener('dblclick', () => {
       const lastName = outputDiv.lastChild ? outputDiv.lastChild.textContent : null;
-      if (lastName) {
-        if (!favorites.includes(lastName)) {
-          favorites.unshift(lastName);
-          if (favorites.length > 80) favorites.pop();
-          localStorage.setItem('namegen_favorites', JSON.stringify(favorites));
-          renderFavorites();
-        }
+      if (lastName && !favorites.includes(lastName)) {
+        favorites.unshift(lastName);
+        if (favorites.length > 80) favorites.pop();
+        localStorage.setItem('namegen_favorites', JSON.stringify(favorites));
+        renderFavorites();
       }
     });
 
     // Initialize
     setup();
-  </script>
-</body>
+  </script></body>
 </html>

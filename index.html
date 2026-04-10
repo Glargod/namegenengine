@@ -14,26 +14,18 @@
       color: #e0e0ff;
       box-sizing: border-box;
     }
-    h1 {
-      text-align: center;
-      color: #00ffcc;
-      font-size: 1.8rem;
-      margin: 10px 0 5px;
-    }
-    .subtitle {
-      text-align: center;
-      color: #ffcc00;
-      font-size: 14px;
-      margin-bottom: 15px;
-    }
+    h1 { text-align: center; color: #00ffcc; font-size: 1.8rem; margin: 10px 0 5px; }
+    .subtitle { text-align: center; color: #ffcc00; font-size: 14px; margin-bottom: 15px; }
+
     .controls, .customize {
       text-align: center;
-      margin: 15px 0;
+      margin: 12px 0;
       padding: 12px;
       background-color: #1a1a2e;
       border: 1px solid #00ffcc;
       border-radius: 6px;
     }
+
     button {
       padding: 10px 16px;
       font-size: 15px;
@@ -42,19 +34,26 @@
       border: none;
       border-radius: 4px;
       cursor: pointer;
-      margin: 5px;
+      margin: 4px;
     }
     button:hover { background-color: #00ccaa; }
-    select, input[type="range"] {
+
+    input[type="text"], select, input[type="range"] {
       padding: 8px;
       font-size: 15px;
       margin: 5px;
+      background-color: #2a2a44;
+      color: #e0e0ff;
+      border: 1px solid #00ffcc;
+      border-radius: 4px;
     }
-    label { margin: 0 8px; }
+
+    .custom-row { margin: 8px 0; }
+    label { margin-right: 8px; }
 
     #output {
       width: 100%;
-      height: 480px;
+      height: 460px;
       border: 2px solid #00ffcc;
       overflow-y: auto;
       padding: 12px;
@@ -62,14 +61,10 @@
       font-family: monospace;
       font-size: 15.5px;
       line-height: 1.55;
-      margin-bottom: 15px;
       word-break: break-all;
     }
-    .name-line {
-      cursor: pointer;
-      padding: 3px 6px;
-      border-radius: 3px;
-    }
+
+    .name-line { cursor: pointer; padding: 3px 6px; border-radius: 3px; }
     .name-line:hover { background-color: #2a2a44; }
     .name-line.copied { background-color: #00aa77; color: white; }
 
@@ -92,30 +87,20 @@
     }
     .fav-item:hover { background-color: #2a2a44; }
 
-    .status {
-      text-align: center;
-      margin: 10px 0;
-      font-size: 14px;
-      color: #88ffaa;
-    }
-
-    @media (max-width: 480px) {
-      button { min-width: 100px; padding: 9px 12px; }
-      #output { height: 420px; font-size: 14.5px; }
-    }
+    .status { text-align: center; margin: 10px 0; font-size: 14px; color: #88ffaa; }
   </style>
 </head>
 <body>
   <h1>Glargod's Namegen Engine</h1>
-  <p class="subtitle">v11.1 — Tandy 1000 legacy edition with Customize</p>
+  <p class="subtitle">v11.2 — Customize your chaos</p>
 
   <div class="controls">
     <button onclick="toggleGeneration()">Start / Pause</button>
-    <button onclick="generateBurst(10)">+10 Burst</button>
-    <button onclick="generateBurst(50)">+50 Burst</button>
-    <button onclick="clearOutput()">Clear Output</button>
+    <button onclick="generateBurst(10)">+10</button>
+    <button onclick="generateBurst(50)">+50</button>
+    <button onclick="clearOutput()">Clear</button>
     
-    <label>Speed:
+    <label>Speed: 
       <select id="speedSelect" onchange="updateSpeed()">
         <option value="80">Slow</option>
         <option value="30" selected>Normal</option>
@@ -124,16 +109,29 @@
     </label>
   </div>
 
-  <!-- Customize Panel -->
+  <!-- Customize Section -->
   <div class="customize">
-    <strong>Customize:</strong><br>
-    <label>Max Base Length: <span id="maxLenValue">14</span></label>
-    <input type="range" id="maxLength" min="8" max="22" value="14" oninput="updateMaxLength(this.value)">
-    
-    <br>
-    <label><input type="checkbox" id="useTitles" checked> Titles (Lord, Sir...)</label>
-    <label><input type="checkbox" id="useOf" checked> "of XXX"</label>
-    <label><input type="checkbox" id="useSecondName" checked> Second Name</label>
+    <strong>Customize:</strong><br><br>
+
+    <div class="custom-row">
+      <label>Max Base Length: <span id="maxLenValue">14</span></label>
+      <input type="range" id="maxLength" min="6" max="24" value="14" oninput="updateMaxLength(this.value)">
+    </div>
+
+    <div class="custom-row">
+      <label>Title: <input type="text" id="customTitle" placeholder="e.g. King, Queen, Lord" style="width:160px"></label>
+      <label><input type="checkbox" id="useTitles" checked> Random Titles</label>
+    </div>
+
+    <div class="custom-row">
+      <label>Prefix: <input type="text" id="customPrefix" placeholder="e.g. Dark, Blood" style="width:140px"></label>
+      <label>Suffix: <input type="text" id="customSuffix" placeholder="e.g. born, ward" style="width:140px"></label>
+    </div>
+
+    <div class="custom-row">
+      <label><input type="checkbox" id="useOf" checked> Allow "of XXX"</label>
+      <label><input type="checkbox" id="useSecondName" checked> Allow second name</label>
+    </div>
   </div>
 
   <div class="status" id="status">Ready — Press SPACEBAR or click Start</div>
@@ -158,10 +156,7 @@
     let isRunning = false;
     let intervalId = null;
     let currentSpeed = 30;
-    let maxBaseLength = 14;           // Default
-    let useTitles = true;
-    let useOf = true;
-    let useSecondName = true;
+    let maxBaseLength = 14;
 
     const outputDiv = document.getElementById('output');
     const favoritesDiv = document.getElementById('favorites');
@@ -169,7 +164,7 @@
     let favorites = JSON.parse(localStorage.getItem('namegen_favorites') || '[]');
 
     function setup() {
-      outputDiv.innerHTML = "Glargod's Namegen Engine v11.1 — Now with Customize!<br><br>";
+      outputDiv.innerHTML = "Glargod's Namegen Engine v11.2 — Customize your chaos!<br><br>";
       renderFavorites();
     }
 
@@ -180,7 +175,11 @@
 
     function generateBaseName() {
       let nameArray = [];
-      if (Math.random() < 0.25) nameArray.push(prefixes[Math.floor(Math.random() * prefixes.length)]);
+
+      // Custom Prefix
+      const customPrefix = document.getElementById('customPrefix').value.trim();
+      if (customPrefix) nameArray.push(customPrefix);
+      else if (Math.random() < 0.25) nameArray.push(prefixes[Math.floor(Math.random() * prefixes.length)]);
 
       const syllables = Math.floor(Math.random() * 3) + 2;
 
@@ -193,7 +192,11 @@
           if (odd) nameArray.push(odd);
         }
       }
-      if (Math.random() < 0.35) nameArray.push(suffixes[Math.floor(Math.random() * suffixes.length)]);
+
+      // Custom Suffix
+      const customSuffix = document.getElementById('customSuffix').value.trim();
+      if (customSuffix) nameArray.push(customSuffix);
+      else if (Math.random() < 0.35) nameArray.push(suffixes[Math.floor(Math.random() * suffixes.length)]);
 
       let name = nameArray.join('');
       return name.length > maxBaseLength ? name.substring(0, maxBaseLength) : name;
@@ -202,17 +205,22 @@
     function generateName() {
       let nameParts = [];
 
-      if (useTitles && Math.random() < 0.18) {
+      const customTitle = document.getElementById('customTitle').value.trim();
+      const useRandomTitle = document.getElementById('useTitles').checked;
+
+      if (customTitle) {
+        nameParts.push(customTitle + " ");
+      } else if (useRandomTitle && Math.random() < 0.18) {
         nameParts.push(titles[Math.floor(Math.random() * titles.length)] + " ");
       }
 
       nameParts.push(generateBaseName());
 
-      if (useOf && Math.random() < 0.18) {
+      if (document.getElementById('useOf').checked && Math.random() < 0.18) {
         nameParts.push(" of ");
         nameParts.push(prefixes[Math.floor(Math.random() * prefixes.length)]);
       } 
-      else if (useSecondName && Math.random() < 0.10) {
+      else if (document.getElementById('useSecondName').checked && Math.random() < 0.10) {
         nameParts.push(" ");
         nameParts.push(generateBaseName());
       }
@@ -242,12 +250,12 @@
       });
     }
 
-    // ==================== CONTROLS ====================
+    // Controls
     function toggleGeneration() {
       if (isRunning) {
         clearInterval(intervalId);
         isRunning = false;
-        statusDiv.textContent = "PAUSED — Press SPACE or click Start/Pause";
+        statusDiv.textContent = "PAUSED";
       } else {
         isRunning = true;
         statusDiv.textContent = "Generating... (SPACE to pause)";
@@ -257,21 +265,13 @@
 
     function updateSpeed() {
       currentSpeed = parseInt(document.getElementById('speedSelect').value);
-      if (isRunning) {
-        clearInterval(intervalId);
-        intervalId = setInterval(generateName, currentSpeed);
-      }
+      if (isRunning) intervalId = setInterval(generateName, currentSpeed);
     }
 
     function updateMaxLength(value) {
       maxBaseLength = parseInt(value);
       document.getElementById('maxLenValue').textContent = value;
     }
-
-    // Update checkboxes
-    document.getElementById('useTitles').addEventListener('change', (e) => useTitles = e.target.checked);
-    document.getElementById('useOf').addEventListener('change', (e) => useOf = e.target.checked);
-    document.getElementById('useSecondName').addEventListener('change', (e) => useSecondName = e.target.checked);
 
     function generateBurst(count) {
       for (let i = 0; i < count; i++) generateName();
@@ -282,13 +282,13 @@
       isRunning = false;
       outputDiv.innerHTML = "";
       setup();
-      statusDiv.textContent = "Output cleared — Ready to generate";
+      statusDiv.textContent = "Output cleared";
     }
 
-    // ==================== FAVORITES ====================
+    // Favorites (same as before)
     function renderFavorites() {
       if (favorites.length === 0) {
-        favoritesDiv.innerHTML = "<i>No favorites yet. Click names or double-click output area.</i>";
+        favoritesDiv.innerHTML = "<i>No favorites yet...</i>";
         return;
       }
       let html = '';
@@ -308,7 +308,7 @@
 
     function copyAllFavorites() {
       if (favorites.length === 0) return;
-      navigator.clipboard.writeText(favorites.join('\n')).then(() => alert('✅ All favorites copied!'));
+      navigator.clipboard.writeText(favorites.join('\n')).then(() => alert('All favorites copied!'));
     }
 
     function clearFavorites() {
@@ -319,7 +319,6 @@
       }
     }
 
-    // Keyboard
     document.addEventListener('keydown', e => {
       if (e.key === " ") {
         e.preventDefault();
@@ -337,7 +336,6 @@
       }
     });
 
-    // Initialize
     setup();
   </script>
 </body>

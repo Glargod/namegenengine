@@ -1,73 +1,55 @@
-# Random Name Generator
+# Glargod's Namegen Engine
 
-A fast, fun, and endlessly running **fantasy name generator** built with pure HTML, CSS, and JavaScript.
+**v11.0** — A fast, fun, single-file fantasy name generator with old-school procedural soul.
 
-Generate beautiful, chaotic fantasy names in real-time — perfect for writers, game masters, worldbuilders, or just for fun.
+Born from late-night coding sessions on a Tandy 1000 in BASIC 2.0.  
+"Glargod" and "Vanrengod" were among the first names this engine ever spat out.
 
-![Demo](https://via.placeholder.com/800x400/1a1a2e/00ffcc?text=Wrangler+Name+Generator+v10.0)  
-*(Add a screenshot of the running app here later)*
+![Screenshot](https://via.placeholder.com/800x500/0a0a14/00ffcc?text=Namegen+Engine+v11.0)
 
 ## Features
 
-- ⚡ **High-speed name generation** — dozens of names per second
-- ⌨️ **Spacebar control** — Press **Space** to pause or resume anytime
-- 🎲 Rich fantasy name engine with:
-  - Prefixes, suffixes, and honorific titles
-  - Variable syllables and apostrophes
-  - Rare consonant clusters ("oddities") like `th`, `sh`, `rr`, `ll`, `thr`, etc.
-  - Optional compound names and "of" constructions
-- Clean retro-terminal style output
-- Live iteration counter
-- Fully client-side — works offline
+- Real-time continuous generation
+- **Spacebar** to pause/resume (just like the old days)
+- Adjustable speed (Slow / Normal / Fast)
+- Click any name to copy it instantly
+- **+10 / +50 Burst** buttons for quick batches
+- ⭐ **Favorites** system (saved in browser)
+- Rich syllable + oddity system for natural-sounding fantasy names
+- Titles, compounds, and "of X" constructions
+- Fully offline — one single HTML file
 
-## How to Use
+## How to Run
 
-1. Download `index.html`
-2. Open the file in any modern browser (Chrome, Firefox, Edge, etc.)
-3. Click **"Start / Pause"** or simply press the **Spacebar**
-4. Watch the names flow!
-5. Press **Spacebar** again to pause when you see a name you like
-6. Click **"Clear Output"** to start fresh
+1. Clone or download the repo
+2. Open `index.html` in any browser
+3. Hit **Start** or press **Spacebar**
+4. Click names you like → they copy automatically
+5. Double-click the output area or use the ⭐ to save favorites
 
-### Pro Tip:
-Keep it running and tap Spacebar whenever you want to stop and copy good names.
+## Why This One Feels Different
 
-## What's New in v10.0
+Most modern generators feel too clean or Markov-heavy.  
+This one keeps the raw, chaotic joy of 1980s BASIC procedural generation — but with modern UX polish.
 
-- Removed the old "Glargod hunting" filter
-- Now generates **all** names (no filtering)
-- Added smooth Spacebar pause/resume functionality
-- Cleaner UI with better dark theme
-- Faster and more reliable generation
-- Improved name variety
+Perfect for:
+- D&D / RPG campaigns
+- Worldbuilding & novel writing
+- Just zoning out and watching names scroll
 
-## Tech Stack
+## Future Ideas (Contributions Welcome)
 
-- Pure HTML5 + CSS + Vanilla JavaScript
-- Zero dependencies
-- Single file — easy to share or host
-
-## Ideas for Future Improvements
-
-- Export all generated names to TXT or JSON
-- Save favorite names
-- Adjustable generation speed slider
-- Dark/Light mode toggle
-- Name rarity or "quality" indicator
-- Sound effects on name generation (optional)
-- Integration with D&D / worldbuilding tools
-
-## Contributing
-
-Feel free to fork and make it even better!  
-Ideas, bug fixes, or new name components are always welcome.
+- Multiple cultural themes (Elvish / Dwarvish / Orcish presets)
+- Export to .txt / JSON
+- Name rarity ratings
+- Light Markov mode for even more coherent names
 
 ## License
 
-MIT License — Free to use, modify, and share.
+MIT — Do whatever you want. Just keep the spirit alive.
 
 ---
 
-**Made with creativity and chaos** ✨
+**Made by Glargod** — with fond memories of the Tandy 1000 and late nights with my brother.
 
-*“One Spacebar tap away from the perfect fantasy name.”*
+*"One more name... just one more..."*

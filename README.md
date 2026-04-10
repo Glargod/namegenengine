@@ -1,4 +1,4 @@
-# Wrangler Name Generator
+# Random Name Generator
 
 A fast, fun, and endlessly running **fantasy name generator** built with pure HTML, CSS, and JavaScript.
 

@@ -190,29 +190,31 @@
       return Math.random() * 100 < oddities[idx].rate ? oddities[idx].odd : null;
     }
 
-    function generateBaseName(maxLen = 24) {
+        function generateBaseName() {
       let nameArray = [];
-      let pos = 0;
-
-      if (Math.random() < 0.28) {
+      
+      // Optional prefix (25% chance)
+      if (Math.random() < 0.25) {
         nameArray.push(prefixes[Math.floor(Math.random() * prefixes.length)]);
       }
 
-      const syllables = Math.floor(Math.random() * 4) + 2;
+      // 2 to 4 syllables — keeps names reasonably short
+      const syllables = Math.floor(Math.random() * 3) + 2;
 
-      for (let i = 0; i < syllables && pos < maxLen; i++) {
+      for (let i = 0; i < syllables; i++) {
         nameArray.push(consonants[Math.floor(Math.random() * consonants.length)]);
         nameArray.push(vowels[Math.floor(Math.random() * vowels.length)]);
 
         if (Math.random() < 0.07) nameArray.push("'");
-        
-        if (Math.random() < 0.22) {
+
+        if (Math.random() < 0.18) {
           const odd = approveOddity();
           if (odd) nameArray.push(odd);
         }
       }
 
-      if (Math.random() < 0.38) {
+      // Optional suffix (35% chance)
+      if (Math.random() < 0.35) {
         nameArray.push(suffixes[Math.floor(Math.random() * suffixes.length)]);
       }
 
@@ -222,24 +224,28 @@
     function generateName() {
       let nameParts = [];
 
-      if (Math.random() < 0.20) {
+      // Optional Title (e.g. Lord, Sir, etc.) — kept separate
+      if (Math.random() < 0.18) {
         nameParts.push(titles[Math.floor(Math.random() * titles.length)] + " ");
       }
 
+      // Main base name (this is what we shortened)
       nameParts.push(generateBaseName());
 
-      if (Math.random() < 0.25) {
+      // Optional addon: " of Something" — much rarer now
+      if (Math.random() < 0.18) {
         nameParts.push(" of ");
         nameParts.push(prefixes[Math.floor(Math.random() * prefixes.length)]);
-      } else if (Math.random() < 0.18) {
+      } 
+      // Very rare second name part
+      else if (Math.random() < 0.10) {
         nameParts.push(" ");
-        nameParts.push(generateBaseName(20));
+        nameParts.push(generateBaseName());
       }
 
       const fullName = nameParts.join('').trim();
       addNameToOutput(fullName);
     }
-
     function addNameToOutput(name) {
       const line = document.createElement('div');
       line.className = 'name-line';

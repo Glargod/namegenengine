@@ -1,69 +1,73 @@
-# Glargod's Wrangler Name Generator
+# Wrangler Name Generator
 
-A fun, chaotic, and endlessly running fantasy name generator inspired by fantasy RPGs, with a special twist: **it only outputs names that contain the substring "glargod"**.
+A fast, fun, and endlessly running **fantasy name generator** built with pure HTML, CSS, and JavaScript.
 
-Built as a single-file HTML + JavaScript web app — just open the file in your browser and watch the names flow!
+Generate beautiful, chaotic fantasy names in real-time — perfect for writers, game masters, worldbuilders, or just for fun.
 
-![Demo](https://via.placeholder.com/800x400/1a1a2e/00ff9f?text=Glargod%27s+Wrangler+Name+Generator)  
-*(Replace with a real screenshot when you add one)*
+![Demo](https://via.placeholder.com/800x400/1a1a2e/00ffcc?text=Wrangler+Name+Generator+v10.0)  
+*(Add a screenshot of the running app here later)*
 
 ## Features
 
-- Generates unique fantasy-style names on the fly
-- Includes prefixes, suffixes, titles, syllables, apostrophes, and rare "oddities" (like `th`, `sh`, `rr`, `ll`, etc.)
-- **Special hunting mode**: Only displays names containing **"glargod"** (case-insensitive)
-- Real-time iteration counter
-- Start / Stop / Clear controls
-- Retro terminal-style output area
-- Fully client-side — no backend required
-
-## Why "Glargod"?
-
-"Glargod" is the sacred word this generator is hunting for. Most names get generated internally, but only the rare chosen ones containing "glargod" make it to the screen.
-
-It's weird. It's wonderful. It's Glargod.
+- ⚡ **High-speed name generation** — dozens of names per second
+- ⌨️ **Spacebar control** — Press **Space** to pause or resume anytime
+- 🎲 Rich fantasy name engine with:
+  - Prefixes, suffixes, and honorific titles
+  - Variable syllables and apostrophes
+  - Rare consonant clusters ("oddities") like `th`, `sh`, `rr`, `ll`, `thr`, etc.
+  - Optional compound names and "of" constructions
+- Clean retro-terminal style output
+- Live iteration counter
+- Fully client-side — works offline
 
 ## How to Use
 
-1. Download `index.html` (or clone the repo)
-2. Open the file in any modern web browser
-3. Click **"Start Generating"**
-4. Watch the magic (and the occasional glorious "Glargod" name) appear
+1. Download `index.html`
+2. Open the file in any modern browser (Chrome, Firefox, Edge, etc.)
+3. Click **"Start / Pause"** or simply press the **Spacebar**
+4. Watch the names flow!
+5. Press **Spacebar** again to pause when you see a name you like
+6. Click **"Clear Output"** to start fresh
 
-You can stop it anytime or clear the output.
+### Pro Tip:
+Keep it running and tap Spacebar whenever you want to stop and copy good names.
+
+## What's New in v10.0
+
+- Removed the old "Glargod hunting" filter
+- Now generates **all** names (no filtering)
+- Added smooth Spacebar pause/resume functionality
+- Cleaner UI with better dark theme
+- Faster and more reliable generation
+- Improved name variety
 
 ## Tech Stack
 
 - Pure HTML5 + CSS + Vanilla JavaScript
-- No frameworks or dependencies
-- Designed to mimic an old-school terminal/generator feel
+- Zero dependencies
+- Single file — easy to share or host
 
-## Project Status
+## Ideas for Future Improvements
 
-**Current Version**: v9.4
-
-This is a fun side project that keeps evolving. The generator is intentionally over-the-top and slightly chaotic — just how we like it.
-
-## Ideas for Future Versions
-
-- Export generated names as TXT/JSON
-- Dark mode toggle
-- Adjustable generation speed
-- Name rarity / quality ratings
-- Sound effects (because why not?)
-- "Glargod" counter with stats
+- Export all generated names to TXT or JSON
+- Save favorite names
+- Adjustable generation speed slider
+- Dark/Light mode toggle
+- Name rarity or "quality" indicator
+- Sound effects on name generation (optional)
+- Integration with D&D / worldbuilding tools
 
 ## Contributing
 
-Feel free to fork this project and make it even weirder!  
-Pull requests welcome — especially if you can make the names even more gloriously ridiculous.
+Feel free to fork and make it even better!  
+Ideas, bug fixes, or new name components are always welcome.
 
 ## License
 
-MIT License — Do whatever you want with it. Just don't blame me when you start naming all your D&D characters after Glargod.
+MIT License — Free to use, modify, and share.
 
 ---
 
-**Made with chaos and love by [Your Username]**
+**Made with creativity and chaos** ✨
 
-*“In the beginning, there was only noise… then came Glargod.”*
+*“One Spacebar tap away from the perfect fantasy name.”*

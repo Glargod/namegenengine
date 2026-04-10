@@ -292,15 +292,35 @@
       statusDiv.textContent = "Output cleared — Ready to generate";
     }
 
-    function renderFavorites() {
-      favoritesDiv.innerHTML = favorites.length === 0
-        ? "<i>No favorites yet. Click names or double-click output area.</i>"
-        : favorites.map(name => `<div style="cursor:pointer" onclick="copyName(this, '${name.replace(/'/g, "\\'")}')">${name}</div>`).join('');
+function renderFavorites() {
+      if (favorites.length === 0) {
+        favoritesDiv.innerHTML = "<i>No favorites yet. Click names or double-click output area.</i>";
+        return;
+      }
+
+      let html = '';
+      favorites.forEach(name => {
+        html += `<div style="cursor:pointer; padding: 2px 0;" onclick="copyNameFromFavorites(this, '${name.replace(/'/g, "\\'")}')">${name}</div>`;
+      });
+      favoritesDiv.innerHTML = html;
     }
+
+    // Separate function for favorites click (more reliable)
+    window.copyNameFromFavorites = function(element, name) {
+      navigator.clipboard.writeText(name).then(() => {
+        const original = element.textContent;
+        element.textContent = "✅ Copied!";
+        setTimeout(() => {
+          element.textContent = original;
+        }, 1500);
+      });
+    };
 
     function copyAllFavorites() {
       if (favorites.length === 0) return;
-      navigator.clipboard.writeText(favorites.join('\n')).then(() => alert('All favorites copied!'));
+      navigator.clipboard.writeText(favorites.join('\n')).then(() => {
+        alert('✅ All favorites copied to clipboard!');
+      });
     }
 
     function clearFavorites() {

@@ -3,242 +3,315 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Wrangler Name Generator</title>
+  <title>Glargod's Namegen Engine v11.0</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      max-width: 1000px;
+      max-width: 1200px;
       margin: 20px auto;
       padding: 20px;
-      background-color: #0f0f1a;
+      background-color: #0a0a14;
       color: #e0e0ff;
     }
     h1 {
       text-align: center;
       color: #00ffcc;
+      margin-bottom: 5px;
+    }
+    .subtitle {
+      text-align: center;
+      color: #ffcc00;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+    .controls {
+      text-align: center;
+      margin: 15px 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      align-items: center;
+    }
+    button {
+      padding: 10px 18px;
+      font-size: 15px;
+      background-color: #00ffcc;
+      color: #0a0a14;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover { background-color: #00ccaa; }
+    select, input[type="range"] {
+      padding: 8px;
+      font-size: 15px;
     }
     #output {
       width: 100%;
-      height: 600px;
+      height: 520px;
       border: 2px solid #00ffcc;
       overflow-y: auto;
       padding: 15px;
       background-color: #1a1a2e;
       font-family: monospace;
-      font-size: 16px;
-      line-height: 1.5;
-      box-sizing: border-box;
-      white-space: pre-wrap;
+      font-size: 16.5px;
+      line-height: 1.6;
+      margin-bottom: 15px;
     }
-    .controls {
-      text-align: center;
-      margin: 15px 0;
-    }
-    button {
-      margin: 8px;
-      padding: 12px 24px;
-      font-size: 16px;
-      background-color: #00ffcc;
-      color: #0f0f1a;
-      border: none;
-      border-radius: 4px;
+    .name-line {
       cursor: pointer;
+      padding: 2px 6px;
+      border-radius: 3px;
     }
-    button:hover {
-      background-color: #00ccaa;
-    }
-    #iteration {
-      font-weight: bold;
-      color: #ffcc00;
+    .name-line:hover { background-color: #2a2a44; }
+    .name-line.copied { background-color: #00aa77; color: white; }
+    #favorites {
+      width: 100%;
+      max-height: 200px;
+      overflow-y: auto;
+      border: 1px solid #ffcc00;
+      padding: 10px;
+      background-color: #1a1a2e;
+      font-family: monospace;
     }
     .status {
       text-align: center;
       margin: 10px 0;
       font-size: 14px;
+      color: #88ffaa;
     }
   </style>
 </head>
 <body>
-  <h1>Wrangler Name Generator v10.0</h1>
-  <p style="text-align: center;">Iteration: <span id="iteration">0</span></p>
-  
+  <h1>Glargod's Namegen Engine v11.0</h1>
+  <p class="subtitle">Tandy 1000 spirit • Press SPACE to pause/resume • Click names to copy</p>
+
   <div class="controls">
     <button onclick="toggleGeneration()">Start / Pause</button>
+    <button onclick="generateBurst(10)">+10 Burst</button>
+    <button onclick="generateBurst(50)">+50 Burst</button>
     <button onclick="clearOutput()">Clear Output</button>
+    
+    <label>Speed: 
+      <select id="speedSelect" onchange="updateSpeed()">
+        <option value="80">Slow</option>
+        <option value="30" selected>Normal</option>
+        <option value="8">Fast</option>
+      </select>
+    </label>
   </div>
 
-  <div class="status" id="status">Press SPACEBAR to pause/resume</div>
+  <div class="status" id="status">Ready — Press SPACEBAR or click Start</div>
 
   <div id="output"></div>
 
+  <h2 style="color:#ffcc00; margin-top:25px;">⭐ Favorites <button onclick="copyAllFavorites()" style="font-size:13px;padding:5px 12px;">Copy All</button> <button onclick="clearFavorites()" style="font-size:13px;padding:5px 12px;">Clear</button></h2>
+  <div id="favorites"></div>
+
   <script>
-    // Data structures
-    const prefixes = ["Eld", "Var", "Lor", "Thal", "Gal", "Ar", "Fen", "Vel", "Dur", "Nor", "Kor", "Sylv", "Myth", "Drak"];
-    const suffixes = ["on", "ar", "eth", "iel", "or", "is", "an", "ir", "ul", "en", "orath", "vorn"];
-    const titles = ["Lord", "Baron", "Sir", "Chief", "Warden", "Ranger", "Sage", "Knight", "Drift", "Shadow", "Storm"];
-    
-    const vowels = ["a", "e", "i", "o", "u", "y"];
-    const consonants = ["b", "c", "d", "f", "g", "h", "j", "k", "l", "m", "n", "p", "q", "r", "s", "t", "v", "w", "x", "z"];
+    // ==================== DATA ====================
+    const prefixes = ["Eld","Var","Lor","Thal","Gal","Ar","Fen","Vel","Dur","Nor","Kor","Sylv","Myth","Drak","Riven","Kael","Thorne","Bael","Zor","Myr"];
+    const suffixes = ["on","ar","eth","iel","or","is","an","ir","ul","en","orath","vorn","thar","mir","lyn","drel","vor","karn"];
+    const titles = ["Lord","Baron","Sir","Chief","Warden","Ranger","Sage","Knight","Drift","Shadow","Storm","High","Void","Iron","Frost"];
+
+    const vowels = ["a","e","i","o","u","y","ae","ai","ea"];
+    const consonants = ["b","c","d","f","g","h","j","k","l","m","n","p","q","r","s","t","v","w","x","z","th","sh","ch","ph"];
 
     const oddities = [
-      { oddity: "nn", approvalRate: 40 },
-      { oddity: "ll", approvalRate: 35 },
-      { oddity: "tt", approvalRate: 25 },
-      { oddity: "ss", approvalRate: 45 },
-      { oddity: "th", approvalRate: 85 },
-      { oddity: "sh", approvalRate: 90 },
-      { oddity: "rr", approvalRate: 70 },
-      { oddity: "lf", approvalRate: 40 },
-      { oddity: "thr", approvalRate: 55 },
-      { oddity: "dr", approvalRate: 60 }
+      {odd: "nn", rate: 35}, {odd: "ll", rate: 40}, {odd: "rr", rate: 50},
+      {odd: "th", rate: 85}, {odd: "sh", rate: 90}, {odd: "dr", rate: 60},
+      {odd: "kr", rate: 45}, {odd: "ss", rate: 30}, {odd: "lf", rate: 35},
+      {odd: "thr", rate: 55}
     ];
 
-    // Global variables
+    // ==================== GLOBALS ====================
     let iteration = 0;
     let isRunning = false;
     let intervalId = null;
+    let currentSpeed = 30;
+
     const outputDiv = document.getElementById('output');
-    const iterationSpan = document.getElementById('iteration');
+    const favoritesDiv = document.getElementById('favorites');
     const statusDiv = document.getElementById('status');
+    const iterationSpan = document.createElement('span'); // not displayed but kept for future
 
-    // Setup
+    let favorites = JSON.parse(localStorage.getItem('namegen_favorites') || '[]');
+
+    // ==================== CORE FUNCTIONS ====================
     function setup() {
-      outputDiv.innerHTML = "Wrangler Name Generator v10.0 - Fantasy Name Engine Online<br><br>";
-      iteration = 0;
-      iterationSpan.textContent = iteration;
+      outputDiv.innerHTML = "Glargod's Namegen Engine v11.0 — Legacy of the Tandy 1000<br><br>";
+      renderFavorites();
     }
 
-    // Approve oddity based on rate
-    function approveOddity(index) {
-      return Math.random() * 100 < oddities[index].approvalRate;
+    function approveOddity() {
+      const idx = Math.floor(Math.random() * oddities.length);
+      return Math.random() * 100 < oddities[idx].rate ? oddities[idx].odd : null;
     }
 
-    // Generate a single fantasy name
-    function generateName() {
+    function generateBaseName(maxLen = 22) {
       let nameArray = [];
       let pos = 0;
 
-      // Optional Title
-      if (Math.random() * 100 < 15) {
-        const title = titles[Math.floor(Math.random() * titles.length)];
-        nameArray.push(...title.split(''), ' ');
-        pos += title.length + 1;
-      }
-
-      // First part of the name
-      pos = generateBaseName(nameArray, 22);
-
-      // Optional compound / "of" part
-      if (Math.random() * 100 < 25 && pos < 28) {
-        nameArray.push(' ');
-        if (Math.random() * 100 < 35) {
-          nameArray.push('o', 'f', ' ');
-          const place = prefixes[Math.floor(Math.random() * prefixes.length)];
-          nameArray.push(...place.split(''));
-        } else {
-          generateBaseName(nameArray, 32);
-        }
-      }
-
-      const name = nameArray.join('').trim();
-      
-      iteration++;
-      iterationSpan.textContent = iteration;
-
-      // Add to output
-      const nameElement = document.createElement('div');
-      nameElement.textContent = name;
-      outputDiv.appendChild(nameElement);
-
-      // Auto-scroll
-      outputDiv.scrollTop = outputDiv.scrollHeight;
-    }
-
-    // Core name generation logic
-    function generateBaseName(nameArray, maxLen) {
-      let pos = nameArray.length;
-
       // Optional prefix
-      if (Math.random() * 100 < 20 && pos < maxLen - 4) {
-        const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
-        nameArray.push(...prefix.split(''));
-        pos += prefix.length;
+      if (Math.random() < 0.25) {
+        nameArray.push(prefixes[Math.floor(Math.random() * prefixes.length)]);
+        pos += 4;
       }
 
-      const syllables = Math.floor(Math.random() * 3) + 2; // 2 to 4 syllables
+      const syllables = Math.floor(Math.random() * 3) + 2; // 2–4
 
-      for (let i = 0; i < syllables && pos < maxLen - 1; i++) {
-        if (pos < maxLen - 1) {
-          nameArray.push(consonants[Math.floor(Math.random() * consonants.length)]);
-          pos++;
-        }
-        if (pos < maxLen - 1) {
-          nameArray.push(vowels[Math.floor(Math.random() * vowels.length)]);
-          pos++;
-        }
-        if (Math.random() * 100 < 4 && pos < maxLen - 1) {
-          nameArray.push("'");
-          pos++;
-        }
-        if (Math.random() * 100 < 12 && pos < maxLen - 4) {
-          const oddityIndex = Math.floor(Math.random() * oddities.length);
-          if (approveOddity(oddityIndex)) {
-            const oddity = oddities[oddityIndex].oddity;
-            nameArray.push(...oddity.split(''));
-            pos += oddity.length;
-          } else {
-            nameArray.push(consonants[Math.floor(Math.random() * consonants.length)]);
-            pos++;
-          }
+      for (let i = 0; i < syllables && pos < maxLen; i++) {
+        nameArray.push(consonants[Math.floor(Math.random() * consonants.length)]);
+        nameArray.push(vowels[Math.floor(Math.random() * vowels.length)]);
+
+        // Rare apostrophe
+        if (Math.random() < 0.06) nameArray.push("'");
+
+        // Oddity cluster
+        if (Math.random() < 0.18) {
+          const odd = approveOddity();
+          if (odd) nameArray.push(odd);
         }
       }
 
       // Optional suffix
-      if (Math.random() * 100 < 25 && pos < maxLen - 5) {
-        const suffix = suffixes[Math.floor(Math.random() * suffixes.length)];
-        nameArray.push(...suffix.split(''));
-        pos += suffix.length;
+      if (Math.random() < 0.35) {
+        nameArray.push(suffixes[Math.floor(Math.random() * suffixes.length)]);
       }
 
-      return pos;
+      return nameArray.join('');
     }
 
-    // Toggle generation with Spacebar support
+    function generateName() {
+      let nameParts = [];
+
+      // Optional title
+      if (Math.random() < 0.18) {
+        nameParts.push(titles[Math.floor(Math.random() * titles.length)] + " ");
+      }
+
+      nameParts.push(generateBaseName(22));
+
+      // Optional compound "of X"
+      if (Math.random() < 0.22) {
+        nameParts.push(" of ");
+        nameParts.push(prefixes[Math.floor(Math.random() * prefixes.length)]);
+      } else if (Math.random() < 0.15) {
+        nameParts.push(" ");
+        nameParts.push(generateBaseName(18));
+      }
+
+      const fullName = nameParts.join('').trim();
+
+      iteration++;
+      addNameToOutput(fullName);
+    }
+
+    function addNameToOutput(name) {
+      const line = document.createElement('div');
+      line.className = 'name-line';
+      line.textContent = name;
+      line.onclick = () => copyName(line, name);
+      outputDiv.appendChild(line);
+      outputDiv.scrollTop = outputDiv.scrollHeight;
+    }
+
+    function copyName(element, name) {
+      navigator.clipboard.writeText(name).then(() => {
+        const original = element.textContent;
+        element.textContent = "✅ Copied: " + name;
+        element.classList.add('copied');
+        setTimeout(() => {
+          element.textContent = original;
+          element.classList.remove('copied');
+        }, 1200);
+      });
+    }
+
     function toggleGeneration() {
       if (isRunning) {
         clearInterval(intervalId);
-        intervalId = null;
         isRunning = false;
-        statusDiv.textContent = "PAUSED - Press SPACEBAR or click button to resume";
+        statusDiv.textContent = "PAUSED — Press SPACE or click Start/Pause";
       } else {
-        if (!intervalId) {
-          intervalId = setInterval(() => {
-            generateName();
-          }, 30); // Fast but smooth generation (~33 names per second)
-        }
         isRunning = true;
-        statusDiv.textContent = "Running... Press SPACEBAR to pause";
+        statusDiv.textContent = "Generating... (SPACE to pause)";
+        intervalId = setInterval(generateName, currentSpeed);
       }
     }
 
-    // Clear everything
+    function updateSpeed() {
+      currentSpeed = parseInt(document.getElementById('speedSelect').value);
+      if (isRunning) {
+        clearInterval(intervalId);
+        intervalId = setInterval(generateName, currentSpeed);
+      }
+    }
+
+    function generateBurst(count) {
+      for (let i = 0; i < count; i++) {
+        generateName();
+      }
+    }
+
     function clearOutput() {
       clearInterval(intervalId);
-      intervalId = null;
       isRunning = false;
       outputDiv.innerHTML = "";
-      iteration = 0;
-      iterationSpan.textContent = iteration;
       setup();
-      statusDiv.textContent = "Press SPACEBAR to pause/resume";
+      statusDiv.textContent = "Output cleared — Ready to generate";
     }
 
-    // Keyboard support - Spacebar to pause/resume
-    document.addEventListener('keydown', function(e) {
+    // ==================== FAVORITES ====================
+    function addToFavorites(name) {
+      if (!favorites.includes(name)) {
+        favorites.unshift(name);
+        if (favorites.length > 50) favorites.pop();
+        localStorage.setItem('namegen_favorites', JSON.stringify(favorites));
+        renderFavorites();
+      }
+    }
+
+    function renderFavorites() {
+      favoritesDiv.innerHTML = favorites.length === 0 
+        ? "<i>No favorites yet. Click the ⭐ next to a name in the output.</i>" 
+        : favorites.map(name => {
+            const div = document.createElement('div');
+            div.style.cursor = 'pointer';
+            div.innerHTML = `⭐ ${name}`;
+            div.onclick = () => copyName(div, name);
+            return div.outerHTML;
+          }).join('<br>');
+    }
+
+    function copyAllFavorites() {
+      if (favorites.length === 0) return;
+      navigator.clipboard.writeText(favorites.join('\n')).then(() => {
+        alert('All favorites copied to clipboard!');
+      });
+    }
+
+    function clearFavorites() {
+      if (confirm('Clear all favorites?')) {
+        favorites = [];
+        localStorage.setItem('namegen_favorites', '[]');
+        renderFavorites();
+      }
+    }
+
+    // ==================== KEYBOARD ====================
+    document.addEventListener('keydown', e => {
       if (e.key === " ") {
-        e.preventDefault(); // Prevent page scrolling
+        e.preventDefault();
         toggleGeneration();
       }
+    });
+
+    // Double-click on output to add current name to favorites (bonus)
+    outputDiv.addEventListener('dblclick', () => {
+      const lastName = outputDiv.lastChild ? outputDiv.lastChild.textContent : null;
+      if (lastName) addToFavorites(lastName);
     });
 
     // Initialize

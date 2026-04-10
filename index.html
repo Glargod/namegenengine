@@ -292,27 +292,27 @@
       statusDiv.textContent = "Output cleared — Ready to generate";
     }
 
-function renderFavorites() {
+    // ==================== FAVORITES SYSTEM ====================
+    function renderFavorites() {
       if (favorites.length === 0) {
         favoritesDiv.innerHTML = "<i>No favorites yet. Click names or double-click output area.</i>";
         return;
       }
 
       let html = '';
-      favorites.forEach(name => {
-        html += `<div style="cursor:pointer; padding: 2px 0;" onclick="copyNameFromFavorites(this, '${name.replace(/'/g, "\\'")}')">${name}</div>`;
+      favorites.forEach((name, index) => {
+        html += `<div class="fav-item" onclick="copyNameFromFavorites(this, '${name.replace(/'/g, "\\'")}')">${name}</div>`;
       });
       favoritesDiv.innerHTML = html;
     }
 
-    // Separate function for favorites click (more reliable)
     window.copyNameFromFavorites = function(element, name) {
       navigator.clipboard.writeText(name).then(() => {
         const original = element.textContent;
         element.textContent = "✅ Copied!";
         setTimeout(() => {
           element.textContent = original;
-        }, 1500);
+        }, 1400);
       });
     };
 
@@ -331,24 +331,21 @@ function renderFavorites() {
       }
     }
 
-    // Keyboard: Spacebar to pause/resume
-    document.addEventListener('keydown', e => {
-      if (e.key === " ") {
-        e.preventDefault();
-        toggleGeneration();
-      }
-    });
-    // Double-click to favorite last name
+    // Double-click on output to add to favorites
     outputDiv.addEventListener('dblclick', () => {
-      const lastName = outputDiv.lastChild ? outputDiv.lastChild.textContent.trim() : null;
+      const lastLine = outputDiv.lastChild;
+      if (!lastLine) return;
+      
+      const lastName = lastLine.textContent.trim();
+      
       if (lastName && !favorites.includes(lastName)) {
         favorites.unshift(lastName);
         if (favorites.length > 80) favorites.pop();
         localStorage.setItem('namegen_favorites', JSON.stringify(favorites));
-        renderFavorites();        // This forces a refresh
+        renderFavorites();
       }
     });
-
+      
     // Initialize
     setup();
   </script>

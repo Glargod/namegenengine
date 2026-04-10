@@ -150,11 +150,16 @@
     // ==================== BIGGER DATASET ====================
     const prefixes = ["Eld","Var","Lor","Thal","Gal","Ar","Fen","Vel","Dur","Nor","Kor","Sylv","Myth","Drak","Riven","Kael","Thorne","Bael","Zor","Myr",
                       "Ael","Vael","Dorn","Gald","Hal","Ith","Jor","Kyr","Lir","Mael","Nym","Orin","Pael","Quor","Rath","Syl","Tarn","Uld","Vorn","Wyr","Xal","Yor","Zeth"];
+    
     const suffixes = ["on","ar","eth","iel","or","is","an","ir","ul","en","orath","vorn","thar","mir","lyn","drel","vor","karn","dor","fel","grim","har","ith","kesh","lor","mal","nir","oril","phel","quar","reth","sarn","tor","uth","vyr","weth","xar","yrel","zorn"];
+    
     const titles = ["Lord","Baron","Sir","Chief","Warden","Ranger","Sage","Knight","Drift","Shadow","Storm","High","Void","Iron","Frost","Blood","Moon","Star","Dawn","Dusk","Rune","Blade","Flame","Ash","Ember"];
+    
     const vowels = ["a","e","i","o","u","y","ae","ai","ea","eo","ia","io","oa","ui"];
+    
     const consonants = ["b","c","d","f","g","h","j","k","l","m","n","p","q","r","s","t","v","w","x","z",
                         "th","sh","ch","ph","br","dr","fr","gr","kr","pr","str","tr","vr","wr"];
+    
     const oddities = [
       {odd: "nn", rate: 35}, {odd: "ll", rate: 40}, {odd: "rr", rate: 50},
       {odd: "th", rate: 85}, {odd: "sh", rate: 90}, {odd: "dr", rate: 60},
@@ -164,7 +169,6 @@
     ];
 
     // ==================== GLOBALS ====================
-    let iteration = 0;
     let isRunning = false;
     let intervalId = null;
     let currentSpeed = 30;
@@ -216,20 +220,16 @@
     function generateName() {
       let nameParts = [];
 
-      // Optional Title
       if (Math.random() < 0.18) {
         nameParts.push(titles[Math.floor(Math.random() * titles.length)] + " ");
       }
 
-      // Main short base name
       nameParts.push(generateBaseName());
 
-      // Optional " of Something"
       if (Math.random() < 0.18) {
         nameParts.push(" of ");
         nameParts.push(prefixes[Math.floor(Math.random() * prefixes.length)]);
       } 
-      // Very rare second name part
       else if (Math.random() < 0.10) {
         nameParts.push(" ");
         nameParts.push(generateBaseName());
@@ -311,7 +311,7 @@
       }
     }
 
-    // Keyboard support
+    // Keyboard: Spacebar to pause/resume
     document.addEventListener('keydown', e => {
       if (e.key === " ") {
         e.preventDefault();
@@ -319,7 +319,7 @@
       }
     });
 
-    // Double-click to favorite last name
+    // Double-click output to favorite the last name
     outputDiv.addEventListener('dblclick', () => {
       const lastName = outputDiv.lastChild ? outputDiv.lastChild.textContent : null;
       if (lastName && !favorites.includes(lastName)) {
@@ -332,5 +332,6 @@
 
     // Initialize
     setup();
-  </script></body>
+  </script>
+</body>
 </html>

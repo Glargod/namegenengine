@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Glargod's Wrangler Name Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 1000px;
+      margin: 20px auto;
+      padding: 10px;
+    }
+    #output {
+      width: 90%;
+      height: 500px;
+      border: 1px solid #ccc;
+      overflow-y: auto;
+      padding: 15px;
+      background-color: #f9f9f9;
+      font-family: monospace;
+      box-sizing: border-box;
+    }
+    .glargod {
+      color: red;
+      font-weight: bold;
+    }
+    button {
+      margin: 10px 5px;
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+    #iteration {
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Glargod's Wrangler Name Generator v9.4</h1>
+  <p>Iteration: <span id="iteration">0</span></p>
+  <button onclick="startGeneration()">Start Generating</button>
+  <button onclick="stopGeneration()">Stop Generating</button>
+  <button onclick="clearOutput()">Clear Output</button>
+  <div id="output"></div>
+
+  <script>
+    // Data structures
+    const prefixes = ["Eld", "Var", "Lor", "Thal", "Gal", "Ar", "Fen", "Vel", "Dur", "Nor"];
+    const suffixes = ["on", "ar", "eth", "iel", "or", "is", "an", "ir", "ul", "en"];
+    const titles = ["Lord", "Baron", "Sir", "Chief", "Warden", "Ranger", "Grok", "Sage", "Knight", "Drift"];
+    const vowels = ["a", "e", "i", "o", "u", "y"];
+    const consonants = ["b", "c", "d", "f", "g", "h", "j", "k", "l", "m", "n", "p", "q", "r", "s", "t", "v", "w", "x", "z"];
+    const oddities = [
+      { oddity: "nn", approvalRate: 40 },
+      { oddity: "ll", approvalRate: 30 },
+      { oddity: "tt", approvalRate: 20 },
+      { oddity: "ss", approvalRate: 40 },
+      { oddity: "th", approvalRate: 85 },
+      { oddity: "sh", approvalRate: 90 },
+      { oddity: "rr", approvalRate: 70 },
+      { oddity: "zz", approvalRate: 0 },
+      { oddity: "lf", approvalRate: 40 },
+      { oddity: "thr", approvalRate: 55 }
+    ];
+    const prefixCount = 10;
+    const suffixCount = 10;
+    const titleCount = 10;
+    const oddityCount = 10;
+    const vowelCount = 6;
+    const consonantCount = 20;
+
+    // Global variables
+    let iteration = 0;
+    let intervalId = null;
+    const outputDiv = document.getElementById('output');
+    const iterationSpan = document.getElementById('iteration');
+
+    // Simulate Arduino setup
+    function setup() {
+      outputDiv.innerHTML = "Glargod's Wrangler Name Generator v9.4 - Hunting for glargod substring with q, x!<br>";
+      iteration = 0;
+      iterationSpan.textContent = iteration;
+    }
+
+    // Approve oddity based on approval rate
+    function approveOddity(index) {
+      return Math.random() * 100 < oddities[index].approvalRate;
+    }
+
+    // Generate base name
+    function generateBaseName(nameArray, maxLen) {
+      let pos = nameArray.length;
+      let hasAffix = false;
+
+      if (Math.random() * 100 < 10 && pos < maxLen - 1) {
+        const prefix = prefixes[Math.floor(Math.random() * prefixCount)];
+        nameArray.push(...prefix.split(''));
+        pos += prefix.length;
+        hasAffix = true;
+      }
+
+      const syllables = Math.floor(Math.random() * 3) + 2; // 2 to 4
+      for (let i = 0; i < syllables && pos < maxLen - 1; i++) {
+        if (pos < maxLen - 1) {
+          nameArray.push(consonants[Math.floor(Math.random() * consonantCount)]);
+          pos++;
+        }
+        if (pos < maxLen - 1) {
+          nameArray.push(vowels[Math.floor(Math.random() * vowelCount)]);
+          pos++;
+        }
+        if (Math.random() * 100 < 3 && pos < maxLen - 1 && i < syllables - 1) {
+          nameArray.push("'");
+          pos++;
+        }
+        if (Math.random() * 100 < 5 && pos < maxLen - 3) {
+          if (Math.random() < 0.5) {
+            const oddityIndex = Math.floor(Math.random() * oddityCount);
+            if (approveOddity(oddityIndex)) {
+              const oddity = oddities[oddityIndex].oddity;
+              nameArray.push(...oddity.split(''));
+              pos += oddity.length;
+            } else {
+              nameArray.push(consonants[Math.floor(Math.random() * consonantCount)]);
+              pos++;
+            }
+          } else {
+            nameArray.push(consonants[Math.floor(Math.random() * consonantCount)]);
+            pos++;
+          }
+        }
+      }
+
+      if (Math.random() * 100 < 10 && pos < maxLen - 3 && !hasAffix) {
+        const suffix = suffixes[Math.floor(Math.random() * suffixCount)];
+        nameArray.push(...suffix.split(''));
+        pos += suffix.length;
+      }
+
+      return pos;
+    }
+
+    // Generate compound name
+    function generateCompoundName() {
+      let nameArray = [];
+      let pos = 0;
+
+      if (Math.random() * 100 < 3 && pos < 30) {
+        const title = titles[Math.floor(Math.random() * titleCount)];
+        nameArray.push(...title.split(''), ' ');
+        pos += title.length + 1;
+      }
+
+      pos = generateBaseName(nameArray, 20);
+
+      if (Math.random() * 100 < 2 && pos < 25) {
+        nameArray.push(' ');
+        pos++;
+        if (Math.random() * 100 < 25 && pos < 23) {
+          nameArray.push('o', 'f', ' ');
+          pos += 3;
+          const place = prefixes[Math.floor(Math.random() * prefixCount)];
+          nameArray.push(...place.split(''));
+          pos += place.length;
+        } else {
+          pos = generateBaseName(nameArray, 31);
+        }
+      }
+
+      const name = nameArray.join('');
+      const checkName = name.toLowerCase();
+
+      iteration++;
+      iterationSpan.textContent = iteration;
+
+      // Output only if glargod is found
+
+        const nameElement = document.createElement('div');
+        nameElement.textContent = ` ${name} `;
+        outputDiv.appendChild(nameElement);
+
+
+      // Auto-scroll to the latest output
+      outputDiv.scrollTop = outputDiv.scrollHeight;
+    }
+
+    // Start generation
+    function startGeneration() {
+      if (!intervalId) {
+        setup();
+        intervalId = setInterval(generateCompoundName, 0); // 100ms for smooth UI
+      }
+    }
+
+    // Stop generation
+    function stopGeneration() {
+      if (intervalId) {
+        clearInterval(intervalId);
+        intervalId = null;
+      }
+    }
+
+    // Clear output
+    function clearOutput() {
+      stopGeneration();
+      outputDiv.innerHTML = "";
+      iteration = 0;
+      iterationSpan.textContent = iteration;
+      setup();
+    }
+
+    // Initialize on load
+    setup();
+  </script>
+</body>
+</html>
